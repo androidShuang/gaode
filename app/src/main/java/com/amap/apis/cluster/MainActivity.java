@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -25,6 +26,8 @@ import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.apis.cluster.demo.ItemBean;
 import com.amap.apis.cluster.demo.RegionItem;
+import com.blankj.utilcode.util.Utils;
+import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +52,8 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     private ClusterOverlay mClusterOverlay;
     private int[] drawables = new int[]{R.mipmap.daibuche,R.mipmap.huoche,R.mipmap.huoche_1,R.mipmap.lvyouche
     ,R.mipmap.daibuche,R.mipmap.huoche,R.mipmap.huoche_1,R.mipmap.lvyouche,R.mipmap.daibuche,R.mipmap.huoche};
+
+    private EasyPopup mCirclePop;
 
     private void requestPr() {
         PermissionHelper.requestLocation(new PermissionHelper.OnPermissionGrantedListener() {
@@ -77,12 +82,12 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
             mAMap.setOnMapClickListener(new AMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    double lat = Math.random() + 39.474923;
-                    double lon = Math.random() + 116.027116;
-
-                    LatLng latLng1 = new LatLng(lat, lon, false);
-                    RegionItem regionItem = new RegionItem(latLng1,new ItemBean("1","1"));
-                    mClusterOverlay.addClusterItem(regionItem);
+//                    double lat = Math.random() + 39.474923;
+//                    double lon = Math.random() + 116.027116;
+//
+//                    LatLng latLng1 = new LatLng(lat, lon, false);
+//                    RegionItem regionItem = new RegionItem(latLng1,new ItemBean("1","1"));
+//                    mClusterOverlay.addClusterItem(regionItem);
                 }
             });
         }
@@ -219,12 +224,17 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     @Override
     public void onClick(Marker marker, List<ClusterItem> clusterItems) {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (ClusterItem clusterItem : clusterItems) {
-            builder.include(clusterItem.getPosition());
+        if(clusterItems!=null&&clusterItems.size()>1) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (ClusterItem clusterItem : clusterItems) {
+                builder.include(clusterItem.getPosition());
+            }
+            LatLngBounds latLngBounds = builder.build();
+            mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
+        }else if(clusterItems!=null&&clusterItems.size()==1){
+            mCirclePop = EasyPopup.create().setContentView(this, R.layout.layout_circle_comment).setFocusAndOutsideEnable(true).apply();
+            Toast.makeText(Utils.getApp(),clusterItems.get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
         }
-        LatLngBounds latLngBounds = builder.build();
-        mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
     }
 
     @Override
@@ -236,7 +246,6 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                 bitmapDrawable = getApplication().getResources().getDrawable(drawables[new Random().nextInt(10)]);
                 mBackDrawAbles.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDrawable);
             }
-//            return  getApplication().getResources().getDrawable(drawables[new Random().nextInt(3)]);
             return  bitmapDrawable;
         } else if (clusterNum < 15) {
             Drawable bitmapDrawable = mBackDrawAbles.get(11);

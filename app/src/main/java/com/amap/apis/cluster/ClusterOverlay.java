@@ -167,17 +167,15 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener,
     //点击事件
     @Override
     public boolean onMarkerClick(Marker arg0) {
-        Toast.makeText(Utils.getApp(),"hahah",Toast.LENGTH_SHORT).show();
-//        if (mClusterClickListener == null) {
-//            return true;
-//        }
-//       Cluster cluster= (Cluster) arg0.getObject();
-//        if(cluster!=null){
-//            mClusterClickListener.onClick(arg0,cluster.getClusterItems());
-//            return true;
-//        }
-//        return false;
-        return true;
+        if (mClusterClickListener == null) {
+            return true;
+        }
+       Cluster cluster= (Cluster) arg0.getObject();
+        if(cluster!=null){
+            mClusterClickListener.onClick(arg0,cluster.getClusterItems());
+            return true;
+        }
+        return false;
     }
 
 
