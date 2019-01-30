@@ -2,6 +2,7 @@ package com.amap.apis.cluster;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,8 +10,11 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -223,27 +227,37 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
 
     @Override
-    public void onClick(Marker marker, List<ClusterItem> clusterItems) {
-        if(clusterItems!=null&&clusterItems.size()>1) {
+    public void onClick(Marker marker, Cluster clusterItems) {
+        if(clusterItems!=null&&clusterItems.getClusterItems().size()>1) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (ClusterItem clusterItem : clusterItems) {
+            for (ClusterItem clusterItem : clusterItems.getClusterItems()) {
                 builder.include(clusterItem.getPosition());
             }
             LatLngBounds latLngBounds = builder.build();
             mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
-        }else if(clusterItems!=null&&clusterItems.size()==1){
+        }else if(clusterItems!=null&&clusterItems.getClusterItems().size()==1){
             mCirclePop = EasyPopup.create().setContentView(this, R.layout.layout_circle_comment).setFocusAndOutsideEnable(true).apply();
-            Toast.makeText(Utils.getApp(),clusterItems.get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
+            View view = clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl());
+            int left = mMapView.getLeft();
+            int top = mMapView.getTop();
+            int right = mMapView.getRight();
+            int bottom = mMapView.getBottom();
+            int x = (int) (mMapView.getX());
+            int y = (int) (mMapView.getY());
+//            mCirclePop.showAsDropDown(clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl()),x,y);
+            Log.e("VVV",x+"-----Y="+y);
+            Toast.makeText(Utils.getApp(),clusterItems.getClusterItems().get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public Drawable getDrawAble(int clusterNum, Cluster cluster) {
         int radius = dp2px(getApplicationContext(), 40);
         if (clusterNum == 1) {
             Drawable bitmapDrawable = mBackDrawAbles.get(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()));
             if (bitmapDrawable == null) {
-                bitmapDrawable = getApplication().getResources().getDrawable(drawables[new Random().nextInt(10)]);
+                bitmapDrawable = getApplication().getResources().getDrawable(drawables[new Random().nextInt(10)],getTheme());
                 mBackDrawAbles.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDrawable);
             }
             return  bitmapDrawable;

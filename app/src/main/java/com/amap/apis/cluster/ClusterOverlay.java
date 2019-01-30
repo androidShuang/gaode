@@ -172,7 +172,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener,
         }
        Cluster cluster= (Cluster) arg0.getObject();
         if(cluster!=null){
-            mClusterClickListener.onClick(arg0,cluster.getClusterItems());
+            mClusterClickListener.onClick(arg0,cluster);
             return true;
         }
         return false;
@@ -340,17 +340,17 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener,
             textView.setTextColor(Color.BLACK);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
             if (mClusterRender != null && mClusterRender.getDrawAble(num,cluster) != null) {
-                textView.setBackgroundDrawable(mClusterRender.getDrawAble(num, cluster));
+                textView.setBackground(mClusterRender.getDrawAble(num, cluster));
             } else {
                 textView.setBackgroundResource(R.drawable.defaultcluster);
             }
             bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
             if(num==1) {
                 mLruCache.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDescriptor);
+                cluster.putView(cluster.getClusterItems().get(0).getItemBean().getUrl(),textView);
             }else {
                 mLruCache.put(num, bitmapDescriptor);
             }
-
         }
         return bitmapDescriptor;
     }
@@ -396,6 +396,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener,
     /**
      * 处理market添加，更新等操作
      */
+    @SuppressWarnings("unchecked")
     class MarkerHandler extends Handler {
 
         static final int ADD_CLUSTER_LIST = 0;
