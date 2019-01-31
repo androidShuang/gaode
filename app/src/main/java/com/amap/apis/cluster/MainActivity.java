@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.apis.cluster.demo.ItemBean;
 import com.amap.apis.cluster.demo.RegionItem;
 import com.blankj.utilcode.util.Utils;
@@ -39,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class MainActivity extends Activity implements ClusterRender, AMap.OnMapLoadedListener, ClusterClickListener {
+public class MainActivity extends Activity implements ClusterRender, AMap.OnMapLoadedListener, ClusterClickListener ,UpdateAdapterListener{
 
 
     private MapView mMapView;
@@ -58,6 +60,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     ,R.mipmap.daibuche,R.mipmap.huoche,R.mipmap.huoche_1,R.mipmap.lvyouche,R.mipmap.daibuche,R.mipmap.huoche};
 
     private EasyPopup mCirclePop;
+    private WindowAdapter windowAdapter;
 
     private void requestPr() {
         PermissionHelper.requestLocation(new PermissionHelper.OnPermissionGrantedListener() {
@@ -65,6 +68,10 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
             public void onPermissionGranted() {
                 init();
                 initLocation();
+                windowAdapter = new WindowAdapter(MainActivity.this,mAMap);
+                mAMap.setInfoWindowAdapter(windowAdapter);
+                mAMap.setOnMarkerClickListener(windowAdapter);
+                mAMap.setOnInfoWindowClickListener(windowAdapter);
             }
         });
     }
@@ -82,18 +89,6 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
             // 初始化地图
             mAMap = mMapView.getMap();
             mAMap.setOnMapLoadedListener(this);
-            //点击可以动态添加点
-            mAMap.setOnMapClickListener(new AMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-//                    double lat = Math.random() + 39.474923;
-//                    double lon = Math.random() + 116.027116;
-//
-//                    LatLng latLng1 = new LatLng(lat, lon, false);
-//                    RegionItem regionItem = new RegionItem(latLng1,new ItemBean("1","1"));
-//                    mClusterOverlay.addClusterItem(regionItem);
-                }
-            });
         }
     }
 
@@ -115,6 +110,12 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                         mAMap.moveCamera(CameraUpdateFactory.zoomTo(17));
                         //将地图移动到定位点
                         mAMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude())));
+                        MyLocationStyle myLocationStyle = new MyLocationStyle();
+                        mAMap.setMyLocationEnabled(true);
+                        //定位一次，且将视角移动到地图中心点。
+                        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+                        //设置定位蓝点的Style
+                        mAMap.setMyLocationStyle(myLocationStyle);
                         //点击定位按钮 能够将地图的中心移动到定位点
 //                        this.onLocationChanged(aMapLocation);
                     }else {
@@ -176,7 +177,9 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     protected void onDestroy() {
         super.onDestroy();
         //销毁资源
-        mClusterOverlay.onDestroy();
+        if(mClusterOverlay!=null) {
+            mClusterOverlay.onDestroy();
+        }
         mMapView.onDestroy();
     }
 
@@ -225,29 +228,28 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     }
 
 
-
     @Override
     public void onClick(Marker marker, Cluster clusterItems) {
-        if(clusterItems!=null&&clusterItems.getClusterItems().size()>1) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (ClusterItem clusterItem : clusterItems.getClusterItems()) {
-                builder.include(clusterItem.getPosition());
-            }
-            LatLngBounds latLngBounds = builder.build();
-            mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
-        }else if(clusterItems!=null&&clusterItems.getClusterItems().size()==1){
-            mCirclePop = EasyPopup.create().setContentView(this, R.layout.layout_circle_comment).setFocusAndOutsideEnable(true).apply();
-            View view = clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl());
-            int left = mMapView.getLeft();
-            int top = mMapView.getTop();
-            int right = mMapView.getRight();
-            int bottom = mMapView.getBottom();
-            int x = (int) (mMapView.getX());
-            int y = (int) (mMapView.getY());
+//        if(clusterItems!=null&&clusterItems.getClusterItems().size()>1) {
+//            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//            for (ClusterItem clusterItem : clusterItems.getClusterItems()) {
+//                builder.include(clusterItem.getPosition());
+//            }
+//            LatLngBounds latLngBounds = builder.build();
+//            mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
+//        }else if(clusterItems!=null&&clusterItems.getClusterItems().size()==1){
+//            mCirclePop = EasyPopup.create().setContentView(this, R.layout.layout_circle_comment).setFocusAndOutsideEnable(true).apply();
+//            View view = clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl());
+//            int left = view.getLeft();
+//            int top = view.getTop();
+//            int right = view.getRight();
+//            int bottom = view.getBottom();
+//            int x = (int) (view.getX());
+//            int y = (int) (view.getY());
 //            mCirclePop.showAsDropDown(clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl()),x,y);
-            Log.e("VVV",x+"-----Y="+y);
-            Toast.makeText(Utils.getApp(),clusterItems.getClusterItems().get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
-        }
+//            Log.e("VVV",left+"-----Y="+top);
+//            Toast.makeText(Utils.getApp(),clusterItems.getClusterItems().get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -300,5 +302,10 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     public int dp2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    @Override
+    public void onAdapterUpdate() {
+
     }
 }
