@@ -1,9 +1,11 @@
 package com.amap.apis.cluster;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2019/1/31.
  */
 
 public interface UpdateAdapterListener {
-    void onAdapterUpdate();
+    void onAdapterUpdate(List<Cluster> clusters);
 }

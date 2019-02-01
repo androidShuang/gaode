@@ -2,7 +2,6 @@ package com.amap.apis.cluster;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,9 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -27,12 +23,10 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.apis.cluster.demo.ItemBean;
 import com.amap.apis.cluster.demo.RegionItem;
-import com.blankj.utilcode.util.Utils;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -61,6 +55,12 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     private EasyPopup mCirclePop;
     private WindowAdapter windowAdapter;
+
+    public void setCurrentTitle(String currentTitle) {
+        this.currentTitle = currentTitle;
+    }
+
+    private String currentTitle;
 
     private void requestPr() {
         PermissionHelper.requestLocation(new PermissionHelper.OnPermissionGrantedListener() {
@@ -220,7 +220,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                     items.add(regionItem);
 
                 }
-                mClusterOverlay = new ClusterOverlay(mAMap, items, dp2px(getApplicationContext(), clusterRadius), getApplicationContext());
+                mClusterOverlay = new ClusterOverlay(mAMap, items, dp2px(getApplicationContext(), clusterRadius), getApplicationContext(),MainActivity.this);
                 mClusterOverlay.setClusterRenderer(MainActivity.this);
                 mClusterOverlay.setOnClusterClickListener(MainActivity.this);
             }
@@ -305,7 +305,15 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     }
 
     @Override
-    public void onAdapterUpdate() {
-
+    public void onAdapterUpdate(List<Cluster> clusters) {
+        if(clusters!=null){
+            for (Cluster cluster:clusters){
+                for(ClusterItem clusterItem:cluster.getClusterItems()){
+                    if(clusterItem.getItemBean()!=null&&clusterItem.getItemBean().getmTitle().equals(currentTitle)){
+                        cluster.getMarker().showInfoWindow();
+                    }
+                }
+            }
+        }
     }
 }

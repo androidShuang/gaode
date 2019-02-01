@@ -10,6 +10,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
+import com.amap.apis.cluster.demo.ItemBean;
 
 /**
  * Created by Administrator on 2019/1/31.
@@ -20,7 +21,6 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
     private Cluster cluster;
     private static final String TAG = "WindowAdapter";
     private AMap aMap;
-    private boolean updateFlag = true;
     public WindowAdapter(Context context, AMap mAMap) {
         this.context = context;
         this.aMap = mAMap;
@@ -51,8 +51,18 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         address.setText(marker.getSnippet());
         latitude.setText(marker.getPosition().latitude + "");
         longitude.setText(marker.getPosition().longitude + "");
-        Log.e(TAG, "getInfoWindow1: "+marker.getTitle() );
-        Log.e(TAG, "getInfoWindow: "+marker.getSnippet() );
+
+        Cluster cluster = (Cluster) marker.getObject();
+        ItemBean itemBean = null;
+        if(cluster!=null){
+            ClusterItem clusterItem = cluster.getClusterItems().get(0);
+            if(clusterItem!=null&&clusterItem.getItemBean()!=null) {
+                itemBean = clusterItem.getItemBean();
+            }
+        }
+        ((MainActivity)context).setCurrentTitle(itemBean.getmTitle());
+        Log.e(TAG, "getInfoWindow1: "+itemBean.getmTitle());
+        Log.e(TAG, "getInfoWindow: "+itemBean.getUrl());
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().latitude );
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().longitude );
         Log.e(TAG,marker.toString());

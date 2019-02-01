@@ -63,7 +63,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
      * @param context
      */
     public ClusterOverlay(AMap amap, int clusterSize, Context context) {
-        this(amap, null, clusterSize, context);
+        this(amap, null, clusterSize, context,null);
 
 
     }
@@ -76,7 +76,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
      * @param clusterSize
      * @param context
      */
-    public ClusterOverlay(AMap amap, List<ClusterItem> clusterItems, int clusterSize, Context context) {
+    public ClusterOverlay(AMap amap, List<ClusterItem> clusterItems, int clusterSize, Context context,UpdateAdapterListener updateAdapterListener) {
         //默认最多会缓存80张图片作为聚合显示元素图片,根据自己显示需求和app使用内存情况,可以修改数量
         mLruCache = new LruCache<Integer, BitmapDescriptor>(10000) {
             protected void entryRemoved(boolean evicted, Integer key, BitmapDescriptor oldValue, BitmapDescriptor newValue) {
@@ -89,6 +89,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
             mClusterItems = new ArrayList<ClusterItem>();
         }
         mContext = context;
+        this.updateAdapterListener = updateAdapterListener;
         mClusters = new ArrayList<Cluster>();
         this.mAMap = amap;
         mClusterSize = clusterSize;
@@ -183,6 +184,9 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
         for (Cluster cluster : clusters) {
             addSingleClusterToMap(cluster);
         }
+        if(updateAdapterListener!=null) {
+            updateAdapterListener.onAdapterUpdate(clusters);
+        }
     }
 
     private AlphaAnimation mADDAnimation=new AlphaAnimation(0, 1);
@@ -203,8 +207,6 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
         marker.startAnimation();
         cluster.setMarker(marker);
         mAddMarkers.add(marker);
-//        updateAdapter();
-
     }
 
     private void calculateClusters() {
