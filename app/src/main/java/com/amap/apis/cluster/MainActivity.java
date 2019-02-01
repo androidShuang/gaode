@@ -330,6 +330,10 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                             this.updateFlag = updateFlag;
                             cluster.getMarker().showInfoWindow();
                         }
+                        if(cluster.getClusterItems().size()>1){
+                            this.updateFlag = updateFlag;
+                            cluster.getMarker().hideInfoWindow();
+                        }
                     }
                 }
             }
