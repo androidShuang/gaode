@@ -115,7 +115,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         Cluster cluster = (Cluster) marker.getObject();
         Log.e(TAG, "Marker被点击了=="+marker.toString());
         if(cluster!=null&&cluster.getClusterItems()!=null&&cluster.getClusterItems().size()==1) {
-            aMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+//            aMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 //            aMap.setInfoWindowAdapter(new WindowAdapter(context,aMap));
             return false;
         }else{

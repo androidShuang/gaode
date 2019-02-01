@@ -269,13 +269,13 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                 mBackDrawAbles.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDrawable);
             }
             return  bitmapDrawable;
-        } else if (clusterNum < 15) {
+        } else if (clusterNum < 10) {
             Drawable bitmapDrawable = mBackDrawAbles.get(11);
             if (bitmapDrawable == null) {bitmapDrawable = new BitmapDrawable(null, drawCircle(radius, Color.argb(159, 210, 154, 6)));
                 mBackDrawAbles.put(11, bitmapDrawable);
             }
             return bitmapDrawable;
-        } else if (clusterNum < 20) {
+        } else if (clusterNum < 15) {
             Drawable bitmapDrawable = mBackDrawAbles.get(12);
             if (bitmapDrawable == null) {
                 bitmapDrawable = new BitmapDrawable(null, drawCircle(radius, Color.argb(199, 217, 114, 0)));

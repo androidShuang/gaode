@@ -315,7 +315,8 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
     private BitmapDescriptor getBitmapDes(int num, Cluster cluster) {
         BitmapDescriptor bitmapDescriptor = null;
         if(num==1) {
-            bitmapDescriptor = mLruCache.get(num);
+            //这块因为数字的原因会冲突
+            bitmapDescriptor = mLruCache.get(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()));
         }else{
             bitmapDescriptor = mLruCache.get(num);
         }
