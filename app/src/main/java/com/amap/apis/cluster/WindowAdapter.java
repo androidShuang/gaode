@@ -10,6 +10,15 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeAddress;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
+import com.amap.api.services.poisearch.PoiResult;
+import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.apis.cluster.demo.ItemBean;
 
 /**
@@ -21,7 +30,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
     private Cluster cluster;
     private static final String TAG = "WindowAdapter";
     private AMap aMap;
-    public WindowAdapter(Context context, AMap mAMap) {
+    public WindowAdapter(Context context, AMap mAMap,PoiSearch poiSearch) {
         this.context = context;
         this.aMap = mAMap;
     }
@@ -41,11 +50,11 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         //标题
         TextView title = (TextView) view.findViewById(R.id.info_title);
         //地址信息
-        TextView address = (TextView) view.findViewById(R.id.info_address);
+        final TextView address = (TextView) view.findViewById(R.id.info_address);
         //纬度
-        TextView latitude = (TextView) view.findViewById(R.id.info_latitude);
+        final TextView latitude = (TextView) view.findViewById(R.id.info_latitude);
         //经度
-        TextView longitude = (TextView) view.findViewById(R.id.info_longitude);
+        final TextView longitude = (TextView) view.findViewById(R.id.info_longitude);
 
 
 
@@ -57,13 +66,29 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
                 itemBean = clusterItem.getItemBean();
             }
         }
-        title.setText(itemBean.getmTitle());
-        address.setText(itemBean.getUrl());
-        latitude.setText(marker.getPosition().latitude + "");
-        longitude.setText(marker.getPosition().longitude + "");
+        LatLonPoint latLonPoint = new LatLonPoint(marker.getPosition().latitude,marker.getPosition().longitude);
+        GeocodeSearch geocodeSearch = new GeocodeSearch(context);
+        geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
+            @Override
+            public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+                Log.e(TAG, String.valueOf(regeocodeResult.getRegeocodeAddress().getFormatAddress()));
+                latitude.setText(regeocodeResult.getRegeocodeAddress().getFormatAddress());
+            }
+
+            @Override
+            public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+                Log.e(TAG, String.valueOf(geocodeResult.getGeocodeAddressList().get(0)));
+            }
+        });
+        geocodeSearch.getFromLocationAsyn(new RegeocodeQuery(latLonPoint,200,GeocodeSearch.AMAP));
+        address.setText(itemBean.getName());
+        title.setText(itemBean.getPrice());
+//        latitude.setText(marker.getPosition().latitude + "");
+//        longitude.setText(marker.getPosition().longitude + "");
         ((MainActivity)context).setCurrentTitle(itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow1: "+itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow: "+itemBean.getUrl());
+        Log.e(TAG, "getInfoWindow: "+marker.getSnippet());
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().latitude );
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().longitude );
         Log.e(TAG,marker.toString());
@@ -91,7 +116,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         Log.e(TAG, "Marker被点击了=="+marker.toString());
         if(cluster!=null&&cluster.getClusterItems()!=null&&cluster.getClusterItems().size()==1) {
             aMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-            aMap.setInfoWindowAdapter(new WindowAdapter(context,aMap));
+//            aMap.setInfoWindowAdapter(new WindowAdapter(context,aMap));
             return false;
         }else{
             LatLngBounds.Builder builder = new LatLngBounds.Builder();

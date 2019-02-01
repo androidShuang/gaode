@@ -7,10 +7,31 @@ package com.amap.apis.cluster.demo;
 public class ItemBean {
     private String mTitle;
     private String url;
+    private String price;
 
-    public ItemBean(String mTitle, String url) {
+    public ItemBean(String mTitle, String url, String price, String name) {
         this.mTitle = mTitle;
         this.url = url;
+        this.price = price;
+        this.name = name;
+    }
+
+    private String name;
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getmTitle() {

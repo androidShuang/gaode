@@ -25,6 +25,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.services.poisearch.PoiSearch;
 import com.amap.apis.cluster.demo.ItemBean;
 import com.amap.apis.cluster.demo.RegionItem;
 import com.zyyoona7.popup.EasyPopup;
@@ -50,8 +51,11 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     private Map<Integer, Drawable> mBackDrawAbles = new HashMap<Integer, Drawable>();
 
     private ClusterOverlay mClusterOverlay;
+    private PoiSearch poiSearch;
     private int[] drawables = new int[]{R.mipmap.daibuche,R.mipmap.huoche,R.mipmap.huoche_1,R.mipmap.lvyouche
     ,R.mipmap.daibuche,R.mipmap.huoche,R.mipmap.huoche_1,R.mipmap.lvyouche,R.mipmap.daibuche,R.mipmap.huoche};
+    private String[] price = new String[]{"11 元/小时","21 元/小时","31 元/小时","23 元/小时","22 元/小时","18 元/小时","51 元/小时","41 元/小时","9 元/小时","10.5 元/小时","11.9 元/小时"};
+    private String[] name = new String[]{"北京三友充电","北京国家电网","北京比亚迪","特斯拉充电","艾蓓英充电","路特易充电","拉斯特充电","三优充电","梅迪国充电","爱中华充电","华为充电"};
 
     private EasyPopup mCirclePop;
     private WindowAdapter windowAdapter;
@@ -68,7 +72,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
             public void onPermissionGranted() {
                 init();
                 initLocation();
-                windowAdapter = new WindowAdapter(MainActivity.this,mAMap);
+                windowAdapter = new WindowAdapter(MainActivity.this,mAMap,poiSearch);
                 mAMap.setInfoWindowAdapter(windowAdapter);
                 mAMap.setOnMarkerClickListener(windowAdapter);
                 mAMap.setOnInfoWindowClickListener(windowAdapter);
@@ -79,6 +83,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        poiSearch = new PoiSearch(MainActivity.this,null);
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         requestPr();
@@ -216,7 +221,8 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                     }
 //                    Log.e("eee","lat="+lat+"=======lon"+lon);
                     LatLng latLng = new LatLng(lat, lon, false);
-                    RegionItem regionItem = new RegionItem(latLng,new ItemBean(i+"--test",random.nextInt(10)+""));
+                    RegionItem regionItem = new RegionItem(latLng,new ItemBean(i+"--test",random.nextInt(10)+"",price[random.nextInt(10)]
+                            ,name[random.nextInt(10)]));
                     items.add(regionItem);
 
                 }

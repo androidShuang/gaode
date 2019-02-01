@@ -37,6 +37,7 @@ dependencies {
     compile 'com.amap.api:3dmap:latest.integration'
     compile 'com.amap.api:location:4.5.0'
     compile 'com.blankj:utilcode:1.23.2'
+    compile 'com.amap.api:search:latest.integration'
     implementation 'com.github.zyyoona7:EasyPopup:1.1.2'
     testCompile 'junit:junit:4.12'
 }
