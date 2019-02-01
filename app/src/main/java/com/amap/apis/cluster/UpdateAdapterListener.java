@@ -7,5 +7,5 @@ import java.util.List;
  */
 
 public interface UpdateAdapterListener {
-    void onAdapterUpdate(List<Cluster> clusters);
+    void onAdapterUpdate(List<Cluster> clusters, boolean updateFlag);
 }

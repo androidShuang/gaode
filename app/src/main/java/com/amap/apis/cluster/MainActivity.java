@@ -304,13 +304,26 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
         return (int) (dpValue * scale + 0.5f);
     }
 
+    public boolean isUpdateFlag() {
+        return updateFlag;
+    }
+
+    public void setUpdateFlag(boolean updateFlag) {
+        this.updateFlag = updateFlag;
+    }
+
+    private boolean updateFlag = false;
+
     @Override
-    public void onAdapterUpdate(List<Cluster> clusters) {
+    public void onAdapterUpdate(List<Cluster> clusters, boolean updateFlag) {
         if(clusters!=null){
             for (Cluster cluster:clusters){
                 for(ClusterItem clusterItem:cluster.getClusterItems()){
                     if(clusterItem.getItemBean()!=null&&clusterItem.getItemBean().getmTitle().equals(currentTitle)){
-                        cluster.getMarker().showInfoWindow();
+                        if(!cluster.getMarker().isInfoWindowShown()) {
+                            this.updateFlag = updateFlag;
+                            cluster.getMarker().showInfoWindow();
+                        }
                     }
                 }
             }

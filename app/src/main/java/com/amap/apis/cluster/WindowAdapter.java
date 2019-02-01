@@ -47,10 +47,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         //经度
         TextView longitude = (TextView) view.findViewById(R.id.info_longitude);
 
-        title.setText(marker.getTitle());
-        address.setText(marker.getSnippet());
-        latitude.setText(marker.getPosition().latitude + "");
-        longitude.setText(marker.getPosition().longitude + "");
+
 
         Cluster cluster = (Cluster) marker.getObject();
         ItemBean itemBean = null;
@@ -60,13 +57,22 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
                 itemBean = clusterItem.getItemBean();
             }
         }
+        title.setText(itemBean.getmTitle());
+        address.setText(itemBean.getUrl());
+        latitude.setText(marker.getPosition().latitude + "");
+        longitude.setText(marker.getPosition().longitude + "");
         ((MainActivity)context).setCurrentTitle(itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow1: "+itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow: "+itemBean.getUrl());
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().latitude );
         Log.e(TAG, "getInfoWindow: "+marker.getPosition().longitude );
         Log.e(TAG,marker.toString());
-        return view;
+        if(((MainActivity)context).isUpdateFlag()) {
+            ((MainActivity)context).setUpdateFlag(false);
+            return view;
+        }else{
+            return null;
+        }
     }
 
     @Override

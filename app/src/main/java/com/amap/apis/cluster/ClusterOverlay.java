@@ -54,6 +54,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
     private boolean mIsCanceled = false;
     private static final String TAG = "WindowAdapter";
     private UpdateAdapterListener updateAdapterListener;
+    private boolean updateFlag = false;
 
     /**
      * 构造函数
@@ -184,8 +185,9 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
         for (Cluster cluster : clusters) {
             addSingleClusterToMap(cluster);
         }
+        updateFlag = true;
         if(updateAdapterListener!=null) {
-            updateAdapterListener.onAdapterUpdate(clusters);
+            updateAdapterListener.onAdapterUpdate(clusters,updateFlag);
         }
     }
 
