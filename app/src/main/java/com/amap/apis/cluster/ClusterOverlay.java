@@ -45,7 +45,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
     private ClusterRender mClusterRender;
     private List<Marker> mAddMarkers = new ArrayList<Marker>();
     private double mClusterDistance;
-    private LruCache<Integer, BitmapDescriptor> mLruCache;
+    private LruCache<String, BitmapDescriptor> mLruCache;
     private HandlerThread mMarkerHandlerThread = new HandlerThread("addMarker");
     private HandlerThread mSignClusterThread = new HandlerThread("calculateCluster");
     private Handler mMarkerhandler;
@@ -79,7 +79,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
      */
     public ClusterOverlay(AMap amap, List<ClusterItem> clusterItems, int clusterSize, Context context,UpdateAdapterListener updateAdapterListener) {
         //默认最多会缓存80张图片作为聚合显示元素图片,根据自己显示需求和app使用内存情况,可以修改数量
-        mLruCache = new LruCache<Integer, BitmapDescriptor>(10000) {
+        mLruCache = new LruCache<String, BitmapDescriptor>(10000) {
             protected void entryRemoved(boolean evicted, Integer key, BitmapDescriptor oldValue, BitmapDescriptor newValue) {
                 oldValue.getBitmap().recycle();
             }
@@ -300,7 +300,7 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
         for (Cluster cluster : clusters) {
             LatLng clusterCenterPoint = cluster.getCenterLatLng();
             double distance = AMapUtils.calculateLineDistance(latLng, clusterCenterPoint);
-            if (distance < mClusterDistance && mAMap.getCameraPosition().zoom < 17) {
+            if (distance < mClusterDistance && mAMap.getCameraPosition().zoom < 18) {
                 return cluster;
             }
         }
@@ -316,9 +316,10 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
         BitmapDescriptor bitmapDescriptor = null;
         if(num==1) {
             //这块因为数字的原因会冲突
-            bitmapDescriptor = mLruCache.get(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()));
+//            bitmapDescriptor = mLruCache.get(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()));
+            bitmapDescriptor = mLruCache.get(cluster.getClusterItems().get(0).getItemBean().getUrl());
         }else{
-            bitmapDescriptor = mLruCache.get(num);
+            bitmapDescriptor = mLruCache.get(num+"");
         }
         if (bitmapDescriptor == null) {
             TextView textView = new TextView(mContext);
@@ -338,10 +339,10 @@ public class ClusterOverlay implements AMap.OnCameraChangeListener{
             }
             bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
             if(num==1) {
-                mLruCache.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDescriptor);
+                mLruCache.put(cluster.getClusterItems().get(0).getItemBean().getUrl(), bitmapDescriptor);
                 cluster.putView(cluster.getClusterItems().get(0).getItemBean().getUrl(),textView);
             }else {
-                mLruCache.put(num, bitmapDescriptor);
+                mLruCache.put(num+"", bitmapDescriptor);
             }
         }
         return bitmapDescriptor;

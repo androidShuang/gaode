@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class MainActivity extends Activity implements ClusterRender, AMap.OnMapLoadedListener, ClusterClickListener ,UpdateAdapterListener{
 
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     private int clusterRadius = 90;
 
-    private Map<Integer, Drawable> mBackDrawAbles = new HashMap<Integer, Drawable>();
+    private Map<String, Drawable> mBackDrawAbles = new HashMap<String, Drawable>();
 
     private ClusterOverlay mClusterOverlay;
     private PoiSearch poiSearch;
@@ -198,7 +199,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                 List<ClusterItem> items = new ArrayList<ClusterItem>();
 
                 //随机10000个点
-                for (int i = 0; i < 9999; i++) {
+                for (int i = 0; i < 10000; i++) {
                     double lat = -1;
                     double lon = -1;
                     int x = random.nextInt(4);
@@ -221,7 +222,8 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                     }
 //                    Log.e("eee","lat="+lat+"=======lon"+lon);
                     LatLng latLng = new LatLng(lat, lon, false);
-                    RegionItem regionItem = new RegionItem(latLng,new ItemBean(i+"--test",random.nextInt(10)+"",price[random.nextInt(10)]
+                    String uuid = UUID.randomUUID().toString().replaceAll("-","");
+                    RegionItem regionItem = new RegionItem(latLng,new ItemBean(i+"--test",uuid,price[random.nextInt(10)]
                             ,name[random.nextInt(10)]));
                     items.add(regionItem);
 
@@ -263,30 +265,30 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     public Drawable getDrawAble(int clusterNum, Cluster cluster) {
         int radius = dp2px(getApplicationContext(), 40);
         if (clusterNum == 1) {
-            Drawable bitmapDrawable = mBackDrawAbles.get(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()));
+            Drawable bitmapDrawable = mBackDrawAbles.get(cluster.getClusterItems().get(0).getItemBean().getUrl());
             if (bitmapDrawable == null) {
                 bitmapDrawable = getApplication().getResources().getDrawable(drawables[new Random().nextInt(10)],getTheme());
-                mBackDrawAbles.put(Integer.parseInt(cluster.getClusterItems().get(0).getItemBean().getUrl()), bitmapDrawable);
+                mBackDrawAbles.put(cluster.getClusterItems().get(0).getItemBean().getUrl(), bitmapDrawable);
             }
             return  bitmapDrawable;
         } else if (clusterNum < 10) {
             Drawable bitmapDrawable = mBackDrawAbles.get(11);
             if (bitmapDrawable == null) {bitmapDrawable = new BitmapDrawable(null, drawCircle(radius, Color.argb(159, 210, 154, 6)));
-                mBackDrawAbles.put(11, bitmapDrawable);
+                mBackDrawAbles.put(11+"", bitmapDrawable);
             }
             return bitmapDrawable;
         } else if (clusterNum < 15) {
             Drawable bitmapDrawable = mBackDrawAbles.get(12);
             if (bitmapDrawable == null) {
                 bitmapDrawable = new BitmapDrawable(null, drawCircle(radius, Color.argb(199, 217, 114, 0)));
-                mBackDrawAbles.put(12, bitmapDrawable);
+                mBackDrawAbles.put(12+"", bitmapDrawable);
             }
             return bitmapDrawable;
         } else {
             Drawable bitmapDrawable = mBackDrawAbles.get(13);
             if (bitmapDrawable == null) {
                 bitmapDrawable = new BitmapDrawable(null, drawCircle(radius, Color.argb(235, 215, 66, 2)));
-                mBackDrawAbles.put(13, bitmapDrawable);
+                mBackDrawAbles.put(13+"", bitmapDrawable);
             }
             return bitmapDrawable;
         }

@@ -124,7 +124,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
                 builder.include(clusterItem.getPosition());
             }
             LatLngBounds latLngBounds = builder.build();
-            aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
+            aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 20));
             return true;
         }
     }
