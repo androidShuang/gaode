@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="com.amap.apis.cluster.MainActivity">
+    tools:context="com.amap.apis.cluster.com.yyc.apis.cluster.MainActivity">
 
 
     <com.amap.api.maps.MapView
