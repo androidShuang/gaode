@@ -1,10 +1,11 @@
-package com.yyc.apis.cluster.demo;
+package com.yyc.poimap.cluster.demo;
 
 import com.amap.api.maps.model.LatLng;
-import com.yyc.apis.cluster.ClusterItem;
+import com.yyc.poimap.cluster.ClusterItem;
 
 /**
- * Created by yiyi.qi on 16/10/10.
+ * Created by Administrator on 2019/1/29.
+ * 区域BEAN
  */
 
 public class RegionItem implements ClusterItem {
@@ -17,7 +18,6 @@ public class RegionItem implements ClusterItem {
 
     @Override
     public LatLng getPosition() {
-        // TODO Auto-generated method stub
         return mLatLng;
     }
 

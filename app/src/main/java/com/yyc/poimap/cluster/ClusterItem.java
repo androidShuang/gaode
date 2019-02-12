@@ -1,10 +1,10 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import com.amap.api.maps.model.LatLng;
-import com.yyc.apis.cluster.demo.ItemBean;
+import com.yyc.poimap.cluster.demo.ItemBean;
 
 /**
- * Created by yiyi.qi on 16/10/10.
+ * Created by Administrator on 2019/1/29.
  */
 
 public interface ClusterItem {

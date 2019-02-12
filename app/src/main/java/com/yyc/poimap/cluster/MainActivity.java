@@ -1,4 +1,4 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,8 +26,9 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.poisearch.PoiSearch;
-import com.yyc.apis.cluster.demo.ItemBean;
-import com.yyc.apis.cluster.demo.RegionItem;
+import com.amap.apis.cluster.R;
+import com.yyc.poimap.cluster.demo.ItemBean;
+import com.yyc.poimap.cluster.demo.RegionItem;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-public class MainActivity extends Activity implements ClusterRender, AMap.OnMapLoadedListener, ClusterClickListener ,UpdateAdapterListener{
+public class MainActivity extends Activity implements ClusterRender, AMap.OnMapLoadedListener ,UpdateAdapterListener{
 
 
     private MapView mMapView;
@@ -47,18 +48,19 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
 
-    private int clusterRadius = 90;
+    private int clusterRadius = 60;
 
     private Map<String, Drawable> mBackDrawAbles = new HashMap<String, Drawable>();
 
     private ClusterOverlay mClusterOverlay;
     private PoiSearch poiSearch;
-    private int[] drawables = new int[]{R.mipmap.l1,R.mipmap.l2,R.mipmap.l3,R.mipmap.l4
-    ,R.mipmap.l5,R.mipmap.l6,R.mipmap.l7,R.mipmap.l8,R.mipmap.l9,R.mipmap.l10};
+    //制造假数据(如果搭建了服务器应该从服务器进行请求)
+    private int[] drawables = new int[]{R.mipmap.l1, R.mipmap.l2, R.mipmap.l3, R.mipmap.l4
+    , R.mipmap.l5, R.mipmap.l6, R.mipmap.l7, R.mipmap.l8, R.mipmap.l9, R.mipmap.l10};
     private String[] price = new String[]{"11 元/小时","21 元/小时","31 元/小时","23 元/小时","22 元/小时","18 元/小时","51 元/小时","41 元/小时","9 元/小时","10.5 元/小时","11.9 元/小时"};
     private String[] name = new String[]{"北京三友充电","北京国家电网","北京比亚迪","特斯拉充电","艾蓓英充电","路特易充电","拉斯特充电","三优充电","梅迪国充电","爱中华充电","华为充电"};
 
-    private EasyPopup mCirclePop;
+    //用于详情弹窗
     private WindowAdapter windowAdapter;
 
     public void setCurrentTitle(String currentTitle) {
@@ -67,6 +69,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     private String currentTitle;
 
+    //动态申请权限
     private void requestPr(final Bundle savedInstanceState) {
         PermissionHelper.requestLocation(new PermissionHelper.OnPermissionGrantedListener() {
             @Override
@@ -85,7 +88,6 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        poiSearch = new PoiSearch(MainActivity.this,null);
         mMapView = (MapView) findViewById(R.id.map);
         requestPr(savedInstanceState);
     }
@@ -104,6 +106,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
         mMapView.onResume();
     }
 
+    //初始化定位信息
     private void initLocation() {
         locationClient = new AMapLocationClient(getApplicationContext());
         locationClient.setLocationListener(new AMapLocationListener() {
@@ -122,8 +125,6 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
                         //设置定位蓝点的Style
                         mAMap.setMyLocationStyle(myLocationStyle);
-                        //点击定位按钮 能够将地图的中心移动到定位点
-//                        this.onLocationChanged(aMapLocation);
                     }else {
                         //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                         Log.e("AmapError","location Error, ErrCode:"
@@ -149,12 +150,8 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //设置定位模式为AMapLocationMode.Battery_Saving，低功耗模式。
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //设置定位模式为AMapLocationMode.Device_Sensors，仅设备模式。
-//        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        //获取一次定位结果：
         //该方法默认为false。
         mLocationOption.setOnceLocation(true);
-
         //获取最近3s内精度最高的一次定位结果：
         //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
         mLocationOption.setOnceLocationLatest(true);
@@ -191,14 +188,12 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     @Override
     public void onMapLoaded() {
-        //添加测试数据
+        //通过子线程异步加载测试数据
         new Thread() {
             public void run() {
                 Random random = new Random();
-
                 List<ClusterItem> items = new ArrayList<ClusterItem>();
-
-                //随机10000个点
+                //随机10000个点，以北京为中心
                 for (int i = 0; i < 10000; i++) {
                     double lat = -1;
                     double lon = -1;
@@ -226,40 +221,14 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
                     RegionItem regionItem = new RegionItem(latLng,new ItemBean(i+"--test",uuid,price[random.nextInt(10)]
                             ,name[random.nextInt(10)]));
                     items.add(regionItem);
-
                 }
                 mClusterOverlay = new ClusterOverlay(mAMap, items, dp2px(getApplicationContext(), clusterRadius), getApplicationContext(),MainActivity.this);
                 mClusterOverlay.setClusterRenderer(MainActivity.this);
-                mClusterOverlay.setOnClusterClickListener(MainActivity.this);
             }
         }.start();
     }
 
-
-    @Override
-    public void onClick(Marker marker, Cluster clusterItems) {
-//        if(clusterItems!=null&&clusterItems.getClusterItems().size()>1) {
-//            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//            for (ClusterItem clusterItem : clusterItems.getClusterItems()) {
-//                builder.include(clusterItem.getPosition());
-//            }
-//            LatLngBounds latLngBounds = builder.build();
-//            mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0));
-//        }else if(clusterItems!=null&&clusterItems.getClusterItems().size()==1){
-//            mCirclePop = EasyPopup.create().setContentView(this, R.layout.layout_circle_comment).setFocusAndOutsideEnable(true).apply();
-//            View view = clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl());
-//            int left = view.getLeft();
-//            int top = view.getTop();
-//            int right = view.getRight();
-//            int bottom = view.getBottom();
-//            int x = (int) (view.getX());
-//            int y = (int) (view.getY());
-//            mCirclePop.showAsDropDown(clusterItems.getView(clusterItems.getClusterItems().get(0).getItemBean().getUrl()),x,y);
-//            Log.e("VVV",left+"-----Y="+top);
-//            Toast.makeText(Utils.getApp(),clusterItems.getClusterItems().get(0).getItemBean().getUrl()+"",Toast.LENGTH_SHORT).show();
-//        }
-    }
-
+    //根据聚合点数量返回不同的LOGO
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public Drawable getDrawAble(int clusterNum, Cluster cluster) {
@@ -294,6 +263,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
         }
     }
 
+    //绘制圆形聚合点
     private Bitmap drawCircle(int radius, int color) {
         Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -304,14 +274,14 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
         return bitmap;
     }
 
-    /**
-     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
-     */
+
+     //dp转px，用于简单的适配
     public int dp2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
+    //详情气泡的显示与隐藏条件
     public boolean isUpdateFlag() {
         return updateFlag;
     }
@@ -322,6 +292,7 @@ public class MainActivity extends Activity implements ClusterRender, AMap.OnMapL
 
     private boolean updateFlag = false;
 
+    //详情气泡的更新
     @Override
     public void onAdapterUpdate(List<Cluster> clusters, boolean updateFlag) {
         if(clusters!=null){

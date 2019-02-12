@@ -1,4 +1,4 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,6 +7,7 @@ import com.blankj.utilcode.util.Utils;
 
 /**
  * Created by Administrator on 2019/1/28.
+ * 自定义application类
  */
 
 public class MyApplication extends Application {

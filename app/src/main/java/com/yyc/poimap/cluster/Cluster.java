@@ -1,4 +1,4 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import android.view.View;
 
@@ -11,14 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by yiyi.qi on 16/10/10.
+ * Created by Administrator on 2019/1/29.
+ * 聚合点BEAN
  */
 
 public class Cluster {
 
-
+    //经纬度信息
     private LatLng mLatLng;
     private List<ClusterItem> mClusterItems;
+    //标记点信息
     private Marker mMarker;
     private Map<String,View> viewMap = new HashMap<>();
 

@@ -1,20 +1,16 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
+import com.amap.apis.cluster.R;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PermissionUtils.OnRationaleListener.ShouldRequest;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2018/01/10
- *     desc  : helper about dialog
- * </pre>
+ * 用于动态申请权限的dialog
  */
 public class DialogHelper {
 
@@ -39,7 +35,6 @@ public class DialogHelper {
                 .setCancelable(false)
                 .create()
                 .show();
-
     }
 
     public static void showOpenAppSettingDialog() {
@@ -64,5 +59,5 @@ public class DialogHelper {
                 .create()
                 .show();
     }
-    
+
 }

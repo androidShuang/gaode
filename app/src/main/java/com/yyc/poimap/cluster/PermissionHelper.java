@@ -1,4 +1,4 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.LogUtils;
@@ -7,12 +7,7 @@ import com.blankj.utilcode.util.PermissionUtils;
 import java.util.List;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2018/01/06
- *     desc  : helper about permission
- * </pre>
+ * 动态权限申请工具类
  */
 public class PermissionHelper {
 

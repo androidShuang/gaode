@@ -1,4 +1,4 @@
-package com.yyc.apis.cluster;
+package com.yyc.poimap.cluster;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,10 +16,12 @@ import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.poisearch.PoiSearch;
-import com.yyc.apis.cluster.demo.ItemBean;
+import com.amap.apis.cluster.R;
+import com.yyc.poimap.cluster.demo.ItemBean;
 
 /**
  * Created by Administrator on 2019/1/31.
+ * 气泡详情adapter
  */
 
 public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickListener,AMap.OnInfoWindowClickListener{
@@ -65,6 +67,7 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         }
         LatLonPoint latLonPoint = new LatLonPoint(marker.getPosition().latitude,marker.getPosition().longitude);
         GeocodeSearch geocodeSearch = new GeocodeSearch(context);
+        //根据经纬度正向查询地址
         geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
             @Override
             public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
@@ -80,8 +83,6 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         geocodeSearch.getFromLocationAsyn(new RegeocodeQuery(latLonPoint,200,GeocodeSearch.AMAP));
         address.setText(itemBean.getName());
         title.setText(itemBean.getPrice());
-//        latitude.setText(marker.getPosition().latitude + "");
-//        longitude.setText(marker.getPosition().longitude + "");
         ((MainActivity)context).setCurrentTitle(itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow1: "+itemBean.getmTitle());
         Log.e(TAG, "getInfoWindow: "+itemBean.getUrl());
@@ -112,8 +113,6 @@ public class WindowAdapter implements AMap.InfoWindowAdapter,AMap.OnMarkerClickL
         Cluster cluster = (Cluster) marker.getObject();
         Log.e(TAG, "Marker被点击了=="+marker.toString());
         if(cluster!=null&&cluster.getClusterItems()!=null&&cluster.getClusterItems().size()==1) {
-//            aMap.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-//            aMap.setInfoWindowAdapter(new WindowAdapter(context,aMap));
             return false;
         }else{
             LatLngBounds.Builder builder = new LatLngBounds.Builder();

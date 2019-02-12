@@ -1,11 +1,13 @@
-package com.yyc.apis.cluster.demo;
+package com.yyc.poimap.cluster.demo;
 
 /**
  * Created by Administrator on 2019/1/29.
+ * 详细信息自定义BEAN
  */
 
 public class ItemBean {
     private String mTitle;
+    //理论上应该是logo的url，这里用UUID替代了
     private String url;
     private String price;
 
